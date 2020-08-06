@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import Doggo from './Doggo'
 import './App.css';
 
-function App() {
+const App = () => {
+  // API key
+  const APP_KEY = '67c59eb5-34bd-4350-babc-1eb798a8fc06'
+
+  //State to store doggo data
+  const [doggo, setDoggo] = useState([])
+  const [doggoPic, setDoggoPic] = useState("")
+
+  // Method that runs to call the API fetch function
+  useEffect(() => {
+    getDoggo()
+  }, [])
+
+  const getNext = e => {
+    if (doggo == undefined) {
+      getDoggo()
+    }
+    getDoggo()
+  }
+
+  // Fetch API function
+  const getDoggo = async () => {
+    const response = await fetch(`https://api.thedogapi.com/v1/images/search`)
+    const data = await response.json();
+    // Assigning API data to state
+    setDoggo(data[0].breeds[0]);
+    setDoggoPic(data[0].url)
+    // Testing
+    console.log(data[0].breeds[0]);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Will this be you next doggo?</h1>
+
+      <div className="profile">
+        <Doggo
+          pic={doggoPic}
+          temperament={doggo.temperament}
+          name={doggo.name}
+        />
+        <button onClick={getNext}>Next Good Boy</button>
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;
